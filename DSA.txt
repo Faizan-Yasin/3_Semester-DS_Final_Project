@@ -1,0 +1,241 @@
+package practice;
+
+public class Node {
+	Prayer_Timing_App data;
+	Node next;
+	
+	Node(Prayer_Timing_App d){
+		data=d;
+		next=null;
+	}
+}
+
+
+package practice;
+
+public class Prayer_Timing_App {
+	 String name;
+	    int hour;
+	    int minute;
+	    String timeFormat; 
+
+	    Prayer_Timing_App(String n, int h, int m, String tf) {
+	        name = n;
+	        hour = h;
+	        minute = m;
+	        timeFormat = tf;
+	    }
+	
+	public void display() {
+		System.out.println("Prayer    |     Time");
+	    System.out.println("--------------------");
+	    System.out.println(name + "    |     " 
+	    	    + (hour < 10 ? "0" + hour : hour)
+	    	    + ":" 
+	    	    + (minute < 10 ? "0" + minute : minute)
+	    	    + " " + timeFormat);
+		System.out.println();
+	}
+}
+
+
+package practice;
+import java.util.Scanner;
+public class LinkedList {
+	static Node head=null;
+    static Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) {
+		loadDefaultPrayers();
+		display();
+        int choice;
+        do {
+            System.out.println("\n\t\t\t\t--- Prayer Timing App ---");
+            System.out.println("1. Display All Prayers");
+            System.out.println("2. Search Prayer");
+            System.out.println("3. Update Prayer Time");
+            System.out.println("4. Show Prayer Time (Start to End)");
+            System.out.println("5. Exit");
+
+            System.out.print("Enter choice: ");
+
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    display();
+                    break;
+
+                case 2:
+                    System.out.print("Enter Prayer Name: ");
+                    String n=sc.nextLine();
+                    search(n);
+                    break;
+
+                case 3:
+                    System.out.print("Enter Prayer Name to update: ");
+                    String pname = sc.nextLine();
+                    update(pname);
+                    break;
+
+                case 4:
+                    System.out.print("Enter Prayer Name: ");
+                    String p = sc.nextLine();
+                    showPrayerTimeRange(p);
+                    break;
+
+                case 5:
+                    System.out.println("Thank you!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 5);
+	}
+	
+	 public static void loadDefaultPrayers() {
+	        add("Fajr", 05, 00, "AM");
+	        add("Dhuhr", 12, 30, "PM");
+	        add("Asr", 03, 45, "PM");
+	        add("Maghrib", 06, 15, "PM");
+	        add("Isha", 07, 45, "PM");
+	    }
+	
+	 public static void add(String name, int hour, int minute, String tf) {
+	        Node newNode = new Node(new Prayer_Timing_App(name, hour, minute, tf));
+	        if (head == null) {
+	            head = newNode;
+	        } else {
+	            Node temp = head;
+	            while (temp.next != null) temp = temp.next;
+	            temp.next = newNode;
+	        }
+	    }
+
+	public static void display() {
+	    System.out.println("\n--- Prayer Times ---");
+	    	    System.out.println("Prayer    |     Time");
+	    System.out.println("--------------------");
+	    	    Node temp = head;
+	    while (temp != null) {
+	    	System.out.println(temp.data.name + "    |     " 
+	    		    + (temp.data.hour < 10 ? "0" + temp.data.hour : temp.data.hour)
+	    		    + ":" 
+	    		    + (temp.data.minute < 10 ? "0" + temp.data.minute : temp.data.minute)
+	    		    + " " + temp.data.timeFormat);
+	        temp = temp.next;
+	    }
+	}
+
+    public static void search(String name) {
+        Node temp = head;
+
+        while (temp != null) {
+            if (temp.data.name.equalsIgnoreCase(name)) {
+            	System.out.println("Prayer Found:");
+            	temp.data.display();
+                return;
+            }
+            temp = temp.next;
+        }
+        System.out.println("Prayer not found.");
+    }
+
+    public static void update(String name) {
+        Node temp = head;
+
+        while (temp != null) {
+            if (temp.data.name.equalsIgnoreCase(name)) {
+                System.out.println("What do you want to update?");
+                System.out.println("1. Prayer Name");
+                System.out.println("2. Hour");
+                System.out.println("3. Minute");
+                System.out.println("4. AM/PM");
+                System.out.print("Enter option: ");
+                int option = sc.nextInt();
+                sc.nextLine();
+                
+                if (option == 1) {
+                    System.out.print("Enter new prayer name: ");
+                    temp.data.name = sc.nextLine();
+                    System.out.println("Prayer name updated!");
+                } else if (option == 2) {
+                    System.out.print("Enter new hour (1-12): ");
+                    int hour = sc.nextInt();
+                    while (hour < 1 || hour > 12) {
+                        System.out.print("Invalid! Enter hour (1-12): ");
+                        hour = sc.nextInt();
+                    }
+                    temp.data.hour = hour;
+                    System.out.println("Hour updated!");
+                } else if (option == 3) {
+                    System.out.print("Enter new minute (0-59): ");
+                    int minute = sc.nextInt();
+                    while (minute < 0 || minute > 59) {
+                        System.out.print("Invalid! Enter minute (0-59): ");
+                        minute = sc.nextInt();
+                    }
+                    temp.data.minute = minute;
+                    System.out.println("Minute updated!");
+                } else if (option == 4) {
+                    System.out.print("Enter AM or PM: ");
+                    String tf = sc.nextLine().toUpperCase();
+                    while (!tf.equals("AM") && !tf.equals("PM")) {
+                        System.out.print("Invalid! Enter AM or PM: ");
+                        tf = sc.nextLine().toUpperCase();
+                    }
+                    temp.data.timeFormat = tf;
+                    System.out.println("Time format updated!");
+                } else {
+                    System.out.println("Invalid option!");
+                }
+                return;
+            }
+            temp = temp.next;
+        }
+        System.out.println("Prayer not found.");
+    }
+    
+    public static void showPrayerTimeRange(String prayerName) {
+
+        if (head == null) {
+            System.out.println("No prayer timings available.");
+            return;
+        }
+
+        Node current = head;
+
+        while (current != null) {
+
+            if (current.data.name.equalsIgnoreCase(prayerName)) {
+
+                String startTime = getTime(current);
+                String endTime = "";
+
+                if (current.next != null) {
+                    endTime = getTime(current.next);
+                }
+
+                System.out.println("Prayer : " + prayerName);
+                System.out.println("Start Time : " + startTime);
+                System.out.println("End Time   : " + endTime);
+                return;
+            }
+
+            current = current.next;
+        }
+
+        System.out.println("Prayer not found.");
+    }
+
+    public static String getTime(Node curr) {
+        String minStr = (curr.data.minute < 10) ? "0" + curr.data.minute : "" + curr.data.minute;
+        String hourStr = (curr.data.hour < 10) ? "0" + curr.data.hour : "" + curr.data.hour;
+        return hourStr + ":" + minStr + " " + curr.data.timeFormat;
+    }
+
+
+}
+
